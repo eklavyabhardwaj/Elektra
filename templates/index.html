@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    h1 {
+        text-align: left;
+        color: #008080;
+
+    }
+
+    #content {
+        flex: 1;
+        overflow-y: auto;
+        padding-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #chat-frame {
+        position: fixed;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 2px solid #008080;
+        border-radius: 15px;
+        overflow-y: auto;
+        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 1000px;
+        bottom: 80px;
+        background-color: #ffffff;
+        padding: 15px;
+        z-index: 1000;
+        overflow-y: hidden; /* Hide the browser's default scrollbar */
+        padding-right: 8px; /* Make room for the custom scrollbar */
+    }
+    #chat-frame:hover {
+            overflow-y: auto; /* Show the scrollbar on hover */
+        }
+
+        #chat-frame::-webkit-scrollbar {
+          width: 8px;
+          margin-right: 0;
+      }
+
+      #chat-frame::-webkit-scrollbar-thumb {
+          background-color: rgba(0, 128, 128, 0.5); /* Adjust the color and transparency as needed */
+          border-radius: 300px;
+      }
+
+      #chat-frame::-webkit-scrollbar-track {
+          background-color: rgba(240, 240, 240, 0.5); /* Adjust the color and transparency as needed */
+      }
+
+      #chat-frame::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(0, 102, 102, 0.7); /* Adjust the color and transparency as needed */
+      }
+
+    #chat-container {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        height: 100%;
+    }
+
+    .message-container {
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 20px;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+
+    .question {
+        background-color: #e0f7fa;
+        align-self: flex-end;
+    }
+
+    .response {
+        background-color: #b2dfdb;
+        align-self: flex-start;
+    }
+
+    #bottom-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 600px;
+        background-color: #ffffff;
+        padding: 15px;
+        box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #008080;
+        border-radius: 15px;
+        margin-right: 10px;
+        box-sizing: border-box;
+        max-width: 100%;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 12px;
+        background-color: #008080;
+        color: #ffffff;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        max-width: 30%;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #006666;
+    }
+
+    #listening-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    text-align: center;
+}
+
+#listening-popup .typing-dots {
+    display: inline-block;
+    overflow: hidden;
+    width: 1em;
+    vertical-align: bottom;
+    animation: typing-dots 1.4s infinite steps(3, start) 0.5s;
+}
+
+#listening-popup .typing-dots span {
+    display: inline-block;
+    width: 0.25em;
+    height: 0.25em;
+    background-color: #008080;
+    border-radius: 50%;
+    margin: 0 0.1em;
+}
+
+#listening-popup p {
+    color: #008080; /* Teal color for the text */
+}
+
+@keyframes typing-dots {
+    to {
+        width: 3.5em;
+    }
+}
+
+
+   .typing-indicator {
+    text-align: left;
+}
+
+.typing-dots {
+    display: inline-block;
+    overflow: hidden;
+    width: 1em;
+    vertical-align: bottom;
+    animation: typing-dots 1.4s infinite steps(3, start) 0.5s;
+}
+
+.typing-dots span {
+    display: inline-block;
+    width: 0.25em;
+    height: 0.25em;
+    background-color: #008080;
+    border-radius: 50%;
+    margin: 0 0.1em;
+}
+
+@keyframes typing-dots {
+    to {
+        width: 3.5em;
+    }
+}
+
+
+@media (max-width: 960px) {
+#chat-frame {
+    width: 90%;
+    max-width: 100%;
+}
+
+input[type="text"] {
+    max-width: calc(100% - 22px);
+}
+
+button {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#bottom-container {
+    width: 90%;
+    max-width: 100%;
+}
+
+#listening-popup {
+    max-width: 80%;
+}
+    }
+
+
+    </style>
+</head>
+
+<body>
+    <h1>ELeKTRA</h1>
+    <div id="content">
+        <div id="chat-frame">
+            <div id="chat-container"></div>
+        </div>
+        <div id="bottom-container">
+          <input type="text" id="user-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button id="voice-input-btn" onclick="startVoiceRecognition()" style="background-color: transparent; border: none;">
+                <img src="/static/voice_icon.jfif" alt="Voice Icon" style="max-width: 30px; max-height: 30px;">
+            </button>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="listening-popup">
+        <p>Listening</p>
+      <div class="typing-dots">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+  </div>
+
+    <script>
+
+    let conversationHistory = [];
+    function sendMessage() {
+    var userMessage = document.getElementById("user-input").value;
+    // Add user message to conversation history
+    conversationHistory.push({ role: "user", text: userMessage });
+    var chatContainer = document.getElementById("chat-container");
+
+    var messageContainer = document.createElement("div");
+    messageContainer.classList.add("message-container", "question");
+    messageContainer.innerHTML = "<p><strong>You:</strong> " + userMessage + "</p>";
+    chatContainer.appendChild(messageContainer);
+    document.getElementById("user-input").value = "";
+
+    // Show typing indicator
+    showTypingIndicator(chatContainer);
+
+    messageContainer.scrollIntoView({ behavior: "smooth", block: "end" });
+    fetch("/get_response", {
+        method: "POST",
+        body: new URLSearchParams({
+            "user_message": userMessage
+        }),
+        headers: {
+            "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+        }
+    })
+
+    .then(response => response.text())
+    // Inside the fetch block of the sendMessage function
+    .then(botResponse => {
+        // Hide typing indicator
+        hideTypingIndicator(chatContainer);
+
+        // Split the bot's response into lines
+        var responseLines = botResponse.split('<br>');
+
+        responseLines.forEach((line, index) => {
+            var messageContainer = document.createElement("div");
+            messageContainer.classList.add("message-container", "response");
+
+            // Add a unique identifier to each container
+            messageContainer.id = "response-" + index;
+
+            var paragraph = document.createElement("p");
+
+            if (index === 0) {
+                // Add "EleKTRA" only in the first line
+                paragraph.innerHTML = "<strong>EleKTRA:</strong> " + line;
+            } else {
+                // Exclude "EleKTRA" from subsequent lines
+                paragraph.innerHTML = line;
+            }
+
+            messageContainer.appendChild(paragraph);
+
+            chatContainer.appendChild(messageContainer);
+
+            // Add space between responses
+            var spaceContainer = document.createElement("div");
+            spaceContainer.style.height = "20px";
+            chatContainer.appendChild(spaceContainer);
+
+            // Adjust chat frame height after adding a new message
+            messageContainer.scrollIntoView({ behavior: "smooth", block: "end" });
+        });
+
+        document.getElementById("user-input").value = "";
+
+        // Add space between the last response and the bottom of the frame
+        var chatFrame = document.getElementById("chat-frame");
+        chatFrame.style.marginBottom = "20px";
+        // Add bot response to conversation history
+            conversationHistory.push({ role: "bot", text: botResponse });
+        });
+}
+// Add a function to clear conversation history
+function clearConversationHistory() {
+    conversationHistory = [];
+}
+
+function showTypingIndicator(chatContainer) {
+    // Remove any existing typing indicator
+    hideTypingIndicator(chatContainer);
+
+    var typingIndicatorContainer = document.createElement("div");
+    typingIndicatorContainer.classList.add("message-container", "response", "typing-indicator");
+
+    var typingDots = document.createElement("div");
+    typingDots.classList.add("typing-dots");
+    typingDots.innerHTML = "<span></span><span></span><span></span>";
+
+    typingIndicatorContainer.appendChild(typingDots);
+    chatContainer.appendChild(typingIndicatorContainer);
+}
+
+function hideTypingIndicator(chatContainer) {
+    // Remove any existing typing indicator
+    var existingTypingIndicator = chatContainer.querySelector(".typing-indicator");
+    if (existingTypingIndicator) {
+        chatContainer.removeChild(existingTypingIndicator);
+    }
+}
+
+
+function displayUserMessage(chatContainer, userMessage) {
+    var userMessageContainer = document.createElement("div");
+    userMessageContainer.classList.add("message-container", "question");
+    userMessageContainer.innerHTML = "<p><strong>You:</strong> " + userMessage + "</p>";
+    chatContainer.appendChild(userMessageContainer);
+}
+
+function displayBotResponse(chatContainer, botResponse) {
+    var botMessageContainer = document.createElement("div");
+    botMessageContainer.classList.add("message-container", "response");
+    botMessageContainer.innerHTML = "<p><strong>EleKTRA:</strong> " + botResponse + "</p>";
+    chatContainer.appendChild(botMessageContainer);
+}
+
+function addSpace(chatContainer) {
+    var spaceContainer = document.createElement("div");
+    spaceContainer.style.height = "20px";
+    chatContainer.appendChild(spaceContainer);
+}
+
+function scrollToBottom(chatContainer) {
+    var lastMessageContainer = chatContainer.lastChild;
+    if (lastMessageContainer) {
+        lastMessageContainer.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+}
+
+function adjustChatFrameHeight() {
+    var chatFrame = document.getElementById("chat-frame");
+    chatFrame.style.marginBottom = "20px";
+}
+
+    </script>
+    <script>
+        let recognition;
+
+        function startVoiceRecognition() {
+        const voiceInputBtn = document.getElementById("voice-input-btn");
+        const listeningPopup = document.getElementById("listening-popup");
+
+        // Display the listening pop-up
+        listeningPopup.style.display = "block";
+        voiceInputBtn.disabled = true;
+
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = function (event) {
+            const userMessage = event.results[0][0].transcript;
+            sendMessageWithVoice(userMessage);
+
+            // Hide the listening pop-up when recognition is successful
+            listeningPopup.style.display = "none";
+        };
+
+        recognition.onend = function () {
+            voiceInputBtn.disabled = false;
+            // Hide the listening pop-up when recognition ends
+            listeningPopup.style.display = "none";
+        };
+
+        recognition.start();
+    }
+
+        function sendMessageWithVoice(userMessage) {
+            const chatContainer = document.getElementById("chat-container");
+            const messageContainer = document.createElement("div");
+            messageContainer.classList.add("message-container", "question");
+            messageContainer.innerHTML = "<p><strong>You:</strong> " + userMessage + "</p>";
+            chatContainer.appendChild(messageContainer);
+
+            fetch("/get_response", {
+                method: "POST",
+                body: new URLSearchParams({
+                    "user_message": userMessage
+                }),
+                headers: {
+                    "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                }
+            })
+            .then(response => response.text())
+            .then(botResponse => {
+                const messageContainer = document.createElement("div");
+                messageContainer.classList.add("message-container", "response");
+                messageContainer.innerHTML = "<p><strong>EleKTRA:</strong> " + botResponse + "</p>";
+                chatContainer.appendChild(messageContainer);
+
+                document.getElementById("user-input").value = "";
+
+                // Add space between responses
+                const spaceContainer = document.createElement("div");
+                spaceContainer.style.height = "20px";
+                chatContainer.appendChild(spaceContainer);
+
+                // Adjust chat frame height after adding a new message
+                messageContainer.scrollIntoView({ behavior: "smooth", block: "end" });
+
+                // Add space between the last response and the bottom of the frame
+                const chatFrame = document.getElementById("chat-frame");
+                chatFrame.style.marginBottom = "20px";
+            });
+
+
+        }
+
+        function handleKeyPress(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    }
+    </script>
+
+</body>
+
+</html>

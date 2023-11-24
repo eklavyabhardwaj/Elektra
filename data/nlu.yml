@@ -1,0 +1,176 @@
+version: "3.1"
+
+nlu:
+  - intent: greet
+    examples: |
+      - hey
+      - hello
+      - hi
+      - hello there
+      - good morning
+      - good evening
+      - moin
+      - hey there
+      - let's go
+      - hey dude
+      - goodmorning
+      - goodevening
+      - good afternoon
+
+  - intent: goodbye
+    examples: |
+      - cu
+      - good by
+      - cee you later
+      - good night
+      - bye
+      - goodbye
+      - have a nice day
+      - see you around
+      - bye bye
+      - see you later
+
+  - intent: affirm
+    examples: |
+      - yes
+      - y
+      - indeed
+      - of course
+      - that sounds good
+      - correct
+
+  - intent: deny
+    examples: |
+      - no
+      - n
+      - never
+      - I don't think so
+      - don't like that
+      - no way
+      - not really
+
+  - intent: mood_great
+    examples: |
+      - perfect
+      - great
+      - amazing
+      - feeling like a king
+      - wonderful
+      - I am feeling very good
+      - I am great
+      - I am amazing
+      - I am going to save the world
+      - super stoked
+      - extremely good
+      - so so perfect
+      - so good
+      - so perfect
+
+  - intent: mood_unhappy
+    examples: |
+      - my day was horrible
+      - I am sad
+      - I don't feel very well
+      - I am disappointed
+      - super sad
+      - I'm so sad
+      - sad
+      - very sad
+      - unhappy
+      - not good
+      - not very good
+      - extremely sad
+      - so saad
+      - so sad
+
+  - intent: bot_challenge
+    examples: |
+      - are you a bot?
+      - are you a human?
+      - am I talking to a bot?
+      - am I talking to a human?
+
+
+  - intent: get_password
+    examples: |
+      - What is the password for [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
+      - Can you give me the password for accessing [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
+      - How do I get the password for [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
+      - I forgot my password for [machine_name](machine_name), can you help with the purpose of [purpose_name](purpose_name)?
+      - What's the secret code for [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
+      - [password_name](password_name) Password for which models?
+      - [password_name](password_name) Password for what models?
+      - [password_name](password_name) Password for which machine?
+      - [password_name](password_name) Password for what machine?
+
+  - intent: access_serial_no
+    examples: |
+      - What is the serial number for [machine_name](machine_name)?
+      - Can you provide the serial number for [machine_name](machine_name)?
+      - How do I find the serial number for [machine_name](machine_name)?
+      - I need the serial number for [machine_name](machine_name).
+      - What's the serial code for [machine_name](machine_name)?
+
+  - intent: access_username
+    examples: |
+     - What is the username for [machine_name](machine_name)?
+     - Can you give me the username for accessing [machine_name](machine_name)?
+     - How do I find the username for [machine_name](machine_name)?
+     - I forgot my username for [machine_name](machine_name), can you help?
+     - What's the username for [machine_name](machine_name)?
+
+
+  - intent: change_serial_no
+    examples: |
+      - How can I change the serial number for [machine_name](machine_name)?
+      - What is the process for updating the serial number for [machine_name](machine_name)?
+      - Can you guide me on changing the serial number for [machine_name](machine_name)?
+      - I need to modify the serial number for [machine_name](machine_name), what should I do?
+      - Is it possible to update the serial number for [machine_name](machine_name)?
+      - How can to change the serial number for [machine_name](machine_name)?
+
+  - intent: password_reset_procedure
+    examples: |
+      - How do I reset my password for [machine_name](machine_name)?
+      - Can you provide the procedure for resetting the password for [machine_name](machine_name)?
+      - I forgot my password for [machine_name](machine_name), what steps should I follow to reset it?
+      - What is the password reset process for [machine_name](machine_name)?
+      - Can you guide me through resetting the password for [machine_name](machine_name)?
+
+  - intent: factory_setting_access
+    examples: |
+      - How can I access the factory settings for [machine_name](machine_name)?
+      - What is the procedure to access the factory settings of [machine_name](machine_name)?
+      - Can you guide me on accessing the factory settings for [machine_name](machine_name)?
+      - I need to access the factory settings for [machine_name](machine_name), what steps should I follow?
+      - Is it possible to reset to factory settings for [machine_name](machine_name)?
+
+
+  - intent: get_instrument_id
+    examples: |
+      - What is the instrument ID for [machine_name](machine_name)?
+      - Can you provide the instrument ID for [machine_name](machine_name)?
+      - How do I find the instrument ID for [machine_name](machine_name)?
+      - I need the instrument ID for [machine_name](machine_name).
+      - What's the ID for [machine_name](machine_name)?
+
+  - intent: calculate_realization
+    examples: |
+      - I want to calculate realization
+      - Please help me with realization calculation
+      - How do I calculate realization?
+      - Can you assist in calculating realization?
+      - What's the formula for realization?
+      - Calculate realization for me
+      - I need help with realization
+      - Help me calculate the realization
+      - I want to know the realization value
+      - Realization calculation
+
+
+  - intent: fallback
+    examples: |
+      - I don't understand
+      - Can you repeat that?
+      - What do you mean?
+      - I'm confused
