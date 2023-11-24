@@ -73,7 +73,8 @@ def login():
 
 def check_erp_credentials(username, password):
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        #browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch()
         context = browser.new_context()
         page = context.new_page()
 
@@ -100,8 +101,8 @@ def check_erp_credentials(username, password):
         page.wait_for_load_state("load")
 
         # Wait for an additional 20 seconds (adjust as needed)
-        print("Waiting for an additional 20 seconds...")
-        page.wait_for_timeout(20000)  # 20,000 milliseconds = 20 seconds
+        print("Waiting for an additional 5 seconds...")
+        page.wait_for_timeout(5000)  # 20,000 milliseconds = 20 seconds
 
         # Check the current URL after login
         current_url = page.url
