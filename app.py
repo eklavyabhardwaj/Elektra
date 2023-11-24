@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify,url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import requests
 import random
 import json
@@ -6,7 +6,15 @@ import pandas as pd
 from markupsafe import Markup
 from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
+from playwright.sync_api import sync_playwright
+import secrets
+from datetime import timedelta
 
+
+
+app = Flask(__name__, static_url_path='/static', static_folder='static')
+# Define a secret key for session management
+app.secret_key = secrets.token_hex(16)
 
 # Load the CSV file into a DataFrame
 csv_file_path = "machine_password.csv"
@@ -14,7 +22,6 @@ df = pd.read_csv(csv_file_path)
 
 # Drop rows with missing values
 df = df.dropna(axis=0, how='any')
-# df = df.fillna(axis=0, how='any')
 
 # Preprocess the data
 texts = df['Machine'] + ' ' + df['Purpose']
@@ -25,25 +32,99 @@ vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(texts)
 y = labels
 
-# Build and train the Random Forest classifier
 # Build and train the Artificial Neural Network (MLP classifier)
 mlp_classifier = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
 mlp_classifier.fit(X, y)
 
+# Define ERP login details (replace with your actual details)
+ERP_USERNAME = "your_username"
+ERP_PASSWORD = "your_password"
 
-app = Flask(__name__, static_url_path='/static', static_folder='static')
-
-
-RASA_API_ENDPOINT = "http://localhost:5005/model/parse"  # Default Rasa API endpoint
-#JSON_DATA_FILE = "C:/Users/Eklavyab/ElectrolabChatBOT/data/passworddata.json"  # Update with the actual path to your JSON file
-
-# Load the JSON data
-# with open(JSON_DATA_FILE, 'r') as json_file:
-    # machine_data = json.load(json_file)
+RASA_API_ENDPOINT = "http://localhost:5005/model/parse"
 
 @app.route("/")
 def home():
+    if 'username' in session:
+        return redirect(url_for("calculate_realization_page"))
     return render_template("index.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        remember = request.form.get("remember")  # Check if the "Remember Me" checkbox is checked
+
+        if check_erp_credentials(username, password):
+            session['username'] = username  # Store the username in the session
+
+            # Set a cookie or use session to remember login information if "Remember Me" is checked
+            if remember == "on":
+                # Set a cookie or use session to remember login information
+                # Example using session:
+                session.permanent = True
+                app.permanent_session_lifetime = timedelta(days=7)  # Adjust as needed
+
+            return redirect(url_for("calculate_realization_page"))
+        else:
+            return render_template("login.html", error="Invalid credentials")
+
+    return render_template("login.html", error=None)
+
+def check_erp_credentials(username, password):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+        context = browser.new_context()
+        page = context.new_page()
+
+        # Navigate to the ERP login page
+        print("Navigating to the ERP login page...")
+        page.goto("https://erp.electrolabgroup.com/login#login")
+
+        # Fill in the login credentials
+        print(f"Filling in the username: {username}")
+        email_input = page.wait_for_selector('//*[@id="login_email"]', timeout=10000)
+        email_input.type(username)
+
+        print("Filling in the password...")
+        password_input = page.wait_for_selector('//*[@id="login_password"]', timeout=10000)
+        password_input.type(password)
+
+        # Find the login button and click it
+        print("Clicking the login button...")
+        login_button = page.wait_for_selector('//*[@id="page-login"]/div/main/div[2]/div/section[1]/div[1]/form/div[2]/button', timeout=10000)
+        login_button.click()
+
+        # Wait for navigation or load state to ensure the login process is completed
+        print("Waiting for the login process to complete...")
+        page.wait_for_load_state("load")
+
+        # Wait for an additional 20 seconds (adjust as needed)
+        print("Waiting for an additional 20 seconds...")
+        page.wait_for_timeout(20000)  # 20,000 milliseconds = 20 seconds
+
+        # Check the current URL after login
+        current_url = page.url
+
+        # Check if the URL matches the expected one
+        is_logged_in = current_url.startswith("https://erp.electrolabgroup.com/app")
+
+        if is_logged_in:
+            print("Login successful!")
+        else:
+            print("Login failed.")
+
+        # Close the browser
+        context.close()
+        browser.close()
+
+        return is_logged_in
+
+@app.route("/calculate_realization_page")
+def calculate_realization_page():
+    if 'username' not in session:
+        return redirect(url_for("login"))
+    return render_template("calculate_realization_page.html")
 
 @app.route("/get_response", methods=["POST"])
 def get_response():
@@ -63,7 +144,6 @@ def interpret_message(message):
             print(f"Intent: {intent}")
             print(f"Entities: {entities}")
 
-            # Pass the user's message to generate_response
             response_text = generate_response(intent, entities, message)
 
             return response_text
@@ -230,9 +310,9 @@ def generate_response(intent, entities, message):
         # Provide a message with a link to the new page for the calculation
 
 
-        response_text = "Sure! Let's calculate the realization. "
+        response_text = "Sure! Let's calculate the realization. \n"
 
-        response_text += f'<a href={url_for("calculate_realization_page")}>Click here to proceed.</a>'
+        response_text += f'<a class = link-button href={url_for("calculate_realization_page")}>Click here to proceed.</a>'
 
 
 
@@ -257,6 +337,9 @@ def generate_response(intent, entities, message):
     else:
         response_text = "I'm not sure how to respond to that."
 
+
+
+
         # Replace '\n' with '<br>'
     response_text = response_text.replace('\n', '<br>')
 
@@ -266,10 +349,7 @@ def generate_response(intent, entities, message):
     return response_text
 
 
-@app.route("/calculate_realization_page")
-def calculate_realization_page():
-    # Render the template for the new page where the user can input details for the calculation
-    return render_template("calculate_realization_page.html")
+
 
 
 
