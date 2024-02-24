@@ -38,7 +38,7 @@ mlp_classifier.fit(X, y)
 ERP_USERNAME = "your_username"
 ERP_PASSWORD = "your_password"
 
-RASA_API_ENDPOINT = "http://localhost:5005/model/parse"
+RASA_API_ENDPOINT = "http://localhost:5006/model/parse"
 
 
 
