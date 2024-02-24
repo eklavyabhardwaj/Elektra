@@ -91,86 +91,218 @@ nlu:
       - am I talking to a human?
 
 
-  - intent: get_password
-    examples: |
-      - What is the password for [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
-      - Can you give me the password for accessing [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
-      - How do I get the password for [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
-      - I forgot my password for [machine_name](machine_name), can you help with the purpose of [purpose_name](purpose_name)?
-      - What's the secret code for [machine_name](machine_name) for the purpose of [purpose_name](purpose_name)?
-      - [password_name](password_name) Password for which models?
-      - [password_name](password_name) Password for what models?
-      - [password_name](password_name) Password for which machine?
-      - [password_name](password_name) Password for what machine?
-
-  - intent: access_serial_no
-    examples: |
-      - What is the serial number for [machine_name](machine_name)?
-      - Can you provide the serial number for [machine_name](machine_name)?
-      - How do I find the serial number for [machine_name](machine_name)?
-      - I need the serial number for [machine_name](machine_name).
-      - What's the serial code for [machine_name](machine_name)?
-
-  - intent: access_username
-    examples: |
-     - What is the username for [machine_name](machine_name)?
-     - Can you give me the username for accessing [machine_name](machine_name)?
-     - How do I find the username for [machine_name](machine_name)?
-     - I forgot my username for [machine_name](machine_name), can you help?
-     - What's the username for [machine_name](machine_name)?
-
-
-  - intent: change_serial_no
-    examples: |
-      - How can I change the serial number for [machine_name](machine_name)?
-      - What is the process for updating the serial number for [machine_name](machine_name)?
-      - Can you guide me on changing the serial number for [machine_name](machine_name)?
-      - I need to modify the serial number for [machine_name](machine_name), what should I do?
-      - Is it possible to update the serial number for [machine_name](machine_name)?
-      - How can to change the serial number for [machine_name](machine_name)?
-
-  - intent: password_reset_procedure
-    examples: |
-      - How do I reset my password for [machine_name](machine_name)?
-      - Can you provide the procedure for resetting the password for [machine_name](machine_name)?
-      - I forgot my password for [machine_name](machine_name), what steps should I follow to reset it?
-      - What is the password reset process for [machine_name](machine_name)?
-      - Can you guide me through resetting the password for [machine_name](machine_name)?
-
-  - intent: factory_setting_access
-    examples: |
-      - How can I access the factory settings for [machine_name](machine_name)?
-      - What is the procedure to access the factory settings of [machine_name](machine_name)?
-      - Can you guide me on accessing the factory settings for [machine_name](machine_name)?
-      - I need to access the factory settings for [machine_name](machine_name), what steps should I follow?
-      - Is it possible to reset to factory settings for [machine_name](machine_name)?
-
-
-  - intent: get_instrument_id
-    examples: |
-      - What is the instrument ID for [machine_name](machine_name)?
-      - Can you provide the instrument ID for [machine_name](machine_name)?
-      - How do I find the instrument ID for [machine_name](machine_name)?
-      - I need the instrument ID for [machine_name](machine_name).
-      - What's the ID for [machine_name](machine_name)?
-
-  - intent: calculate_realization
-    examples: |
-      - I want to calculate realization
-      - Please help me with realization calculation
-      - How do I calculate realization?
-      - Can you assist in calculating realization?
-      - What's the formula for realization?
-      - Calculate realization for me
-      - I need help with realization
-      - Help me calculate the realization
-      - I want to know the realization value
-      - Realization calculation
-
-
   - intent: fallback
     examples: |
       - I don't understand
       - Can you repeat that?
       - What do you mean?
       - I'm confused
+
+  - intent: machine_purpose
+    examples: |
+      - Hardness EHT-5PR
+      - EBT-2PL
+      - Friability Tester EF-2W
+      - EDT- LX Version 4
+      - EMS-8
+      - LT-101P
+      - ETD-1020x
+      - ED-3PO
+      - EMP-21DO
+      - Flow Through Dissolution Apparatus EFD-07
+      - Reciprocating Dissolution Apparatus ERD-03/ERD-07
+      - iDisso
+      - kloudbase
+      - Leak Test ELT-201WP
+      - EMD-21PDO
+      - ED2-SAPOx
+      - Dissolution Tester EDT-Tx
+      - hardness eht5pr
+      - ebt2pl
+      - friability tester ef2w
+      - edtlx version4
+      - ems8
+      - lt101p
+      - etd1020x
+      - ed3po
+      - emp21do
+      - flow through dissolution apparatus efd07
+      - reciprocating dissolution  apparatus erd03/erd07
+      - idisso
+      - leak test elt201wp
+      - emd21pdo
+      - ed2sapox
+      - dissolution  tester edttx
+      - ELAB
+      - Leak Tester ELT - 201WP
+      - ED-2SAPO
+      - EF-2
+      - EF-2W
+      - ETD-1020
+      - ED-2AL
+      - ED-2L
+      - EF-1W
+      - Password for Serial no.
+      - Password for Date & Time
+      - Password for User Name ADMIN
+      - Password for ELECTROLAB
+      - User name by default
+      - Super user name
+      - Password for Touch screen 2
+      - Password for Hardness Capture
+      - Password reset procedure.
+      - Factory setting access
+      - User Name
+      - Password User Name ADMIN
+      - Serial number change
+      - Date & Time access
+      - To access Serial number
+      - To access Date & Time
+      - Disable the security
+      - By Default user name
+      - Password Username 1
+      - Password To access calendar, date & time
+      - Password To access Serial number & MAC ID
+      - To reset password & load default settings
+      - Password User Name ABC
+      - User Name iDisso
+      - Password sysadmin
+      - Password Username ADMIN
+      - Password Serial No.
+      - Password Date & Time
+      - Password Vacuum Calibration
+      - Disable security and delete all users
+      - Access Instrument ID.
+      - Password Date & Time for Basket A
+      - Password Date & Time for Basket B
+      - Password Serial no.
+      - Password Factory Default
+      - Password Apparatus Register
+      - Password Date and Time
+      - Password Temp Calibration
+      - Password User Name - ADMIN
+      - Password for Serial number
+      - Password for Date and Time
+      - Password for UserName ADMIN
+      - Username by default
+      - Super username
+      - UserName
+      - Password UserName ADMIN
+      - Serial no change
+      - Date and Time get
+      - Date & Time get
+      - To get Serial number
+      - To get Date and Time
+      - To get Date & Time
+      - To get Serial no
+      - To access Serial no
+      - By Default username
+      - Password User name 1
+      - Password To access calendar, date and time
+      - Password To access Serial number and MAC ID
+      - To reset password and load default settings
+      - Password UserName ABC
+      - UserName iDisso
+      - Password User name ADMIN
+      - Password Serial Number
+      - get Instrument ID.
+      - Password Date and Time for Basket A
+      - Password Date and Time for Basket B
+      - Password admin username
+      - By Default username
+      - Password Serial number
+      - Password Temperature Calibration
+      - Password UserName - ADMIN
+      - Change Serial number
+      - Change Serial No
+      - Password for User Name ADMIN for models / machine / model
+      - Password for User Name ADMIN for models
+      - Password for User Name ADMIN for machine
+      - Password for User Name ADMIN for model
+      - Front panel/ Keypad not responding
+      - nan
+      - Arm A & Arm B both are not functioning.
+      - Singel Arm not working.
+      - Actual Temperature is not displayed in Bath and ext.probes.
+      - Temperature fluctuation in Bath or Ext. Probes or Both:
+      - Bath Temperature indication is Probe Open.
+      - Heater does not start/Tempreture not rising.
+      - No Display,Instrument dead.
+      - No Display/Display Blank.
+      - Improper data on display
+      - PFAIL Error
+      - Keypad not responding
+      - RESET key not responding.
+      - Motor Not working.
+      - Moror Noise
+      - Drum rotates continuously on starting the instrument
+      - Drum rotates but on display, Count shows 0000 and doesn’t increment
+      - Drum rotates but on display, timeshows 00:00:00 or countsshow 0000 and doesn’t increment
+      - Speed is different than the actual(25 RPM)
+      - Time and Count Values are not getting registered
+      - Blank Display
+      - Black Boxes on display card
+      - Error message Battery low replace it.
+      - Motor Not Rotating
+      - Drum is rotating with noise
+      - Drum rotates continuously
+      - Count & run time showing 0000
+      - RPM shows different than the set value
+      - Printout Problems
+      - Printout in split form
+      - Garbage Printout
+      - Calculation problem in printout
+      - Protocols not saved
+      - No display but backlight is there.
+      - No display,No back light/Dead
+      - Black boxes on display card
+      - Front Panel/Keypad not responding
+      - USP 1 & USP 2 Motor not working
+      - USP 1 Motor not working
+      - Drops /min not accurate Error
+      - Printout problem
+      - Garbage Pintout
+      - Calculation problem in printout:
+      - Instrument not on/Dead
+      - Mains fuse blows after Replacement
+      - Mains is on but no dispplay
+      - Secondary fuse blows after replacement
+      - Temp.Display showing PO error
+      - Motor not working.
+      - Motor not prking up properly.
+      - Temp.not matching bath & external.
+      - Heater Does Not Start Temp.
+      - Temp.over shoot
+      - Timer Display Shows -0.00
+      - Timer display showig ----
+      - No Display
+      - No Display but backlight is there
+      - No display but keypad working
+      - No vibration.
+      - After switch on the instrument vibration direct start
+      - Keypad  not working
+      - Vaccum not achiving
+      - Vaccum not releasing
+      - After releasing vaccum some valuae showing in display.
+      - Vaccum is not shown as per the set value.
+      - Vaccum Calibration Procedure.
+      - Temp.Display showing 61.2 Value
+      - Timer display showing ----
+      - No Display only back light
+      - Only black line on display
+      - After test over motor not stop
+      - At the time of test time showing but Rpm not showing
+      - Rpm not showing as per set Rpm
+      - Garbage value showing in display
+      - Motor not working
+      - Blank Display,Back light on.
+      - Garbage data on display
+      - Time & Not saved in system
+      - Key pad not responding.
+      - Arm A,Arm B Both motor not working.
+      - Arm A not working.
+      - Arm B not working
+      - Heater does not start
+      - Stirrer Motor not working
+      - Printout problem
+      - External Key Board problem
