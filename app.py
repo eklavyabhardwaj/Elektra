@@ -1,15 +1,13 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import requests
 import random
-import json
 import pandas as pd
 from markupsafe import Markup
 from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from playwright.sync_api import sync_playwright
 import secrets
-from datetime import timedelta
-
+from datetime import datetime, timedelta
 
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
@@ -42,11 +40,16 @@ ERP_PASSWORD = "your_password"
 
 RASA_API_ENDPOINT = "http://localhost:5005/model/parse"
 
+
+
+
+
+
 @app.route("/")
 def home():
     if 'username' in session:
-        return redirect(url_for("calculate_realization_page"))
-    return render_template("index.html")
+        return render_template("index.html")
+    return redirect(url_for("login"))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -65,7 +68,7 @@ def login():
                 session.permanent = True
                 app.permanent_session_lifetime = timedelta(days=7)  # Adjust as needed
 
-            return redirect(url_for("calculate_realization_page"))
+            return render_template("index.html")
         else:
             return render_template("login.html", error="Invalid credentials")
 
@@ -127,11 +130,30 @@ def calculate_realization_page():
         return redirect(url_for("login"))
     return render_template("calculate_realization_page.html")
 
+
 @app.route("/get_response", methods=["POST"])
 def get_response():
     user_message = request.form["user_message"]
-    response = interpret_message(user_message)
+
+    # Example: Determine the user_intent (you'll need to replace this with your actual logic)
+    user_intent = "some_intent"  # Placeholder, replace with actual intent determination logic
+
+    if 'machine_name' in session:
+        # Updated to include user_intent
+        response = handle_follow_up(user_intent, user_message, session['machine_name'])
+        session.pop('machine_name', None)
+    elif 'asked_for_machine_name' in session and session['asked_for_machine_name']:
+        session['machine_name'] = user_message
+        response = handle_machine_name_response(user_message)
+        session['asked_for_machine_name'] = False
+    else:
+        response = interpret_message(user_message)
+        # Handle setting 'asked_for_machine_name' as needed
+
     return jsonify(response)
+
+
+
 
 def interpret_message(message):
     payload = {"text": message}
@@ -155,185 +177,130 @@ def interpret_message(message):
         return "Error connecting to Rasa server"
 
 
+
+
 def generate_response(intent, entities, message):
-    if intent == "get_password":
-        # Take the whole question asked by the user
+    if intent == "machine_purpose":
         user_question = request.form["user_message"]
-
-        # Convert the user's question to the same numeric representation used during training
         user_vector = vectorizer.transform([user_question])
-
-        # Make a prediction using the trained MLP classifier
         predicted_label = mlp_classifier.predict(user_vector)
-
-        # Get the confidence of the prediction
         confidence = mlp_classifier.predict_proba(user_vector).max() * 100
 
-        if confidence >= 25:
-            # Customize the response based on the predicted password
-            response_text = f"{predicted_label[0]} Confidence: {confidence:.2f}%"
-        else:
-            response_text = "No password for the provided input."
-
-
-
-    elif intent == "access_serial_no":
-        # Take the whole question asked by the user
-        user_question = request.form["user_message"]
-
-        # Convert the user's question to the same numeric representation used during training
-        user_vector = vectorizer.transform([user_question])
-
-        # Make a prediction using the trained MLP classifier
-        predicted_label = mlp_classifier.predict(user_vector)
-
-        # Get the confidence of the prediction
-        confidence = mlp_classifier.predict_proba(user_vector).max() * 100
-
-        if confidence >= 25:
-            # Customize the response based on the predicted password
-            response_text = f"{predicted_label[0]} Confidence: {confidence:.2f}%"
-        else:
-            response_text = "No password for the provided input."
-
-
-
-
-    elif intent == 'access_username':
-
-        # Take the whole question asked by the user
-        user_question = request.form["user_message"]
-
-        # Convert the user's question to the same numeric representation used during training
-        user_vector = vectorizer.transform([user_question])
-
-        # Make a prediction using the trained MLP classifier
-        predicted_label = mlp_classifier.predict(user_vector)
-
-        # Get the confidence of the prediction
-        confidence = mlp_classifier.predict_proba(user_vector).max() * 100
-
-        if confidence >= 25:
-            # Customize the response based on the predicted password
-            response_text = f"{predicted_label[0]} Confidence: {confidence:.2f}%"
-        else:
-            response_text = "No password for the provided input."
-
-
-    elif intent == 'change_serial_no':
-        # Take the whole question asked by the user
-        user_question = request.form["user_message"]
-
-        # Convert the user's question to the same numeric representation used during training
-        user_vector = vectorizer.transform([user_question])
-
-        # Make a prediction using the trained MLP classifier
-        predicted_label = mlp_classifier.predict(user_vector)
-
-        # Get the confidence of the prediction
-        confidence = mlp_classifier.predict_proba(user_vector).max() * 100
-
-        if confidence >= 25:
-            # Customize the response based on the predicted password
-            response_text = f"{predicted_label[0]} Confidence: {confidence:.2f}%"
-        else:
-            response_text = "No password for the provided input."
-
-
-
-    elif intent == 'password_reset_procedure':
-        # Take the whole question asked by the user
-        user_question = request.form["user_message"]
-
-        # Convert the user's question to the same numeric representation used during training
-        user_vector = vectorizer.transform([user_question])
-
-        # Make a prediction using the trained MLP classifier
-        predicted_label = mlp_classifier.predict(user_vector)
-
-        # Get the confidence of the prediction
-        confidence = mlp_classifier.predict_proba(user_vector).max() * 100
-
-        if confidence >= 25:
-            # Customize the response based on the predicted password
-            response_text = f"{predicted_label[0]} Confidence: {confidence:.2f}%"
-        else:
-            response_text = "No password for the provided input."
-
-
-
-    elif intent == 'factory_setting_access':
-        # Take the whole question asked by the user
-        user_question = request.form["user_message"]
-
-        # Convert the user's question to the same numeric representation used during training
-        user_vector = vectorizer.transform([user_question])
-
-        # Make a prediction using the trained MLP classifier
-        predicted_label = mlp_classifier.predict(user_vector)
-
-        # Get the confidence of the prediction
-        confidence = mlp_classifier.predict_proba(user_vector).max() * 100
-
-        if confidence >= 25:
-            # Customize the response based on the predicted password
-            response_text = f"{predicted_label[0]} Confidence: {confidence:.2f}%"
-        else:
-            response_text = "No password for the provided input."
-
-
-
-    elif intent == 'get_instrument_id':
-        # Take the whole question asked by the user
-        user_question = request.form["user_message"]
-
-        # Convert the user's question to the same numeric representation used during training
-        user_vector = vectorizer.transform([user_question])
-
-        # Make a prediction using the trained MLP classifier
-        predicted_label = mlp_classifier.predict(user_vector)
-
-        # Get the confidence of the prediction
-        confidence = mlp_classifier.predict_proba(user_vector).max() * 100
-
-        if confidence >= 25:
-            # Customize the response based on the predicted password
-            response_text = f"{predicted_label[0]} Confidence: {confidence:.2f}%"
-        else:
-            response_text = "No password for the provided input."
+        if confidence >= 75:
+            # Generate a dynamic response based on the predicted label
+            response_text = predicted_label[0]
+        else:  # confidence < 75, this is the only other option
+            # Ask for the machine name if confidence is less than 75%
+            response_text = "I'm not quite sure which machine you're referring to. Could you please tell me the machine name?"
+            # Set a flag in the session to remember that we've asked for the machine name
+            session['asked_for_machine_name'] = True
 
 
 
 
 
-    elif intent == "calculate_realization":
+    elif intent == "thankmessage":
 
-        # Provide a message with a link to the new page for the calculation
+        greetings = [
 
+            "Happy to help!",
 
-        response_text = "Sure! Let's calculate the realization. \n"
+            "You're welcome!",
 
-        response_text += f'<a class = link-button href={url_for("calculate_realization_page")}>Click here to proceed.</a>'
+            "Glad I could assist you!",
 
+            "No problem, anytime!",
 
+            "It was my pleasure!",
+
+            "You got it! If you have more questions, feel free to ask.",
+
+            "Always here to help!",
+
+            "Anytime! If you need further assistance, just let me know.",
+
+        ]
+
+        response_text = random.choice(greetings)
 
 
     elif intent == "greet":
-        greetings = [
-            "Hello! How can I assist you today?",
-            "Hi there! What can I do for you?",
-            "Hey! How can I help?",
-            "Greetings! Is there something I can help you with?",
-            "Good day! What brings you here?",
+
+        current_time = datetime.now().time()
+
+        hour = current_time.hour
+
+        if 5 <= hour < 12:
+
+            greeting = "Good morning!"
+
+        elif 12 <= hour < 17:
+
+            greeting = "Good afternoon!"
+
+        elif 17 <= hour < 21:
+
+            greeting = "Good evening!"
+
+        else:
+
+            greeting = "Hello!"
+
+        random_responses = [
+
+            "How can I assist you today?",
+
+            "What can I do for you?",
+
+            "How can I help?",
+
+            "Is there something specific you're looking for?",
+
+            "What brings you here?",
+
         ]
-        response_text = random.choice(greetings)
+
+        response_text = f"{greeting} {random.choice(random_responses)}"
+
+
 
     elif intent == 'goodbye':
-        goodbye = [
+
+        current_time = datetime.now().time()
+
+        hour = current_time.hour
+
+        if 5 <= hour < 12:
+
+            time_greeting = "Have a wonderful morning!"
+
+        elif 12 <= hour < 17:
+
+            time_greeting = "Enjoy your afternoon!"
+
+        elif 17 <= hour < 21:
+
+            time_greeting = "Wishing you a pleasant evening!"
+
+        else:
+
+            time_greeting = "Goodnight!"
+
+        goodbye_responses = [
+
             "It was my pleasure to assist you. Goodbye!",
-            "Goodbye! Have a Nice Day."
+
+            "Goodbye! Have a Nice Day.",
+
+            f"Take care! {time_greeting}",
+
+            "Farewell! If you need further assistance, feel free to ask.",
+
+            "Until next time! Stay safe and have a great day!",
+
         ]
-        response_text = random.choice(goodbye)
+
+        response_text = random.choice(goodbye_responses)
 
     else:
         response_text = "I'm not sure how to respond to that."
@@ -342,7 +309,7 @@ def generate_response(intent, entities, message):
 
 
         # Replace '\n' with '<br>'
-    response_text = response_text.replace('\n', '<br>')
+    response_text = response_text.replace('\\n', '<br>')
 
         # Use Markup to render HTML tags
     response_text = Markup(response_text)
@@ -350,9 +317,38 @@ def generate_response(intent, entities, message):
     return response_text
 
 
+def handle_machine_name_response(machine_name):
+    response_text = f"Thank you for providing the machine name: {machine_name}. " \
+                    "What specific information or action are you looking for regarding this machine?"
+    return response_text
+
+
+def handle_follow_up(user_intent, user_message, machine_name):
+    # Combine the machine name with the user message to create a new query context
+    combined_input = f"{machine_name} {user_message}"
+
+    # Transform the combined input using the TF-IDF vectorizer
+    combined_vector = vectorizer.transform([combined_input])
+
+    # Use the MLP classifier to predict the label for the combined input
+    predicted_label = mlp_classifier.predict(combined_vector)
+    confidence = mlp_classifier.predict_proba(combined_vector).max() * 100
+
+    # Generate a response based on the predicted label and confidence level
+    if confidence >= 75:
+        # If the confidence is high, generate a dynamic response based on the predicted label
+        response_text = f"Based on your query about '{user_message}' for the machine '{machine_name}',  " \
+                        f"{predicted_label[0]}"
+    else:
+        # If the confidence is low, ask for clarification or provide a generic response
+        response_text = "I'm not quite sure about your request. Could you please provide more details or clarify your query?"
+
+    # Use Markup to render HTML tags if needed and return the response
+    response_text = Markup(response_text.replace('\n', '<br>'))
+    return response_text
 
 
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=8000)
